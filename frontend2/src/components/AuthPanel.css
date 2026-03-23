@@ -1,0 +1,129 @@
+.auth-panel-container {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.auth-panel-container h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.auth-subtitle {
+  color: #a1a1aa;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.auth-error-banner {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.auth-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.auth-card.active {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.auth-card.expired {
+  border-color: rgba(234, 179, 8, 0.3);
+  background: rgba(234, 179, 8, 0.05);
+}
+
+.auth-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 1.05rem;
+}
+
+.auth-info {
+  flex-grow: 1;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  color: #e4e4e7;
+}
+
+.auth-email {
+  font-weight: 500;
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+
+.auth-expires {
+  color: #a1a1aa;
+  font-size: 0.8rem;
+}
+
+.unconnected-text {
+  color: #71717a;
+  font-style: italic;
+}
+
+.auth-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.auth-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.active .auth-btn {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.active .auth-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.auth-spinner-text {
+  font-size: 0.85rem;
+  color: #60a5fa;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}

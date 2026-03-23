@@ -1,0 +1,30 @@
+# Virtual Environment
+.venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Node Modules (Frontend)
+frontend2/node_modules/
+frontend2/dist/
+frontend2/.eslintcache
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite
+
+# Binaries & Configs
+bin/
+config.yaml
+
+# AI Artifacts
+task.md
+implementation_plan.md
+
+# macOS
+.DS_Store
