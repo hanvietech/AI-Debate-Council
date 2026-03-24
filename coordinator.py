@@ -1,9 +1,12 @@
 import asyncio
 import aiosqlite
 import json
+import logging
 from api_client import stream_chat_completion
 
-DB_PATH = "council.db"
+logger = logging.getLogger(__name__)
+
+DB_PATH = "data/council.db"
 
 async def get_active_agents():
     async with aiosqlite.connect(DB_PATH) as db:

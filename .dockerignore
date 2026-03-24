@@ -1,0 +1,12 @@
+.venv/
+.venv2/
+bin/
+data/
+logs/
+__pycache__/
+*.pyc
+frontend2/node_modules/
+frontend2/dist/
+.git/
+council.db
+council_v2.db

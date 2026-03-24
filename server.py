@@ -71,6 +71,33 @@ class DebateRequest(BaseModel):
 running_debate_tasks = []
 
 # --- REST APIs ---
+@app.get("/api/health")
+async def health_check():
+    health_status = {"status": "ok", "db": "unknown", "sidecar": "unknown"}
+    
+    # Check Sidecar
+    try:
+        from cli_proxy_manager import check_proxy_health
+        is_sidecar_ok = await check_proxy_health(8081)
+        health_status["sidecar"] = "ok" if is_sidecar_ok else "unreachable"
+    except Exception as e:
+        health_status["sidecar"] = f"error: {str(e)}"
+        
+    # Check DB
+    try:
+        import aiosqlite
+        from coordinator import DB_PATH
+        async with aiosqlite.connect(DB_PATH) as db:
+            await db.execute("SELECT 1 FROM agents LIMIT 1")
+            health_status["db"] = "ok"
+    except Exception as e:
+        health_status["db"] = f"error: {str(e)}"
+        
+    if health_status["db"] != "ok" or health_status["sidecar"] != "ok":
+        return JSONResponse(status_code=503, content=health_status)
+        
+    return health_status
+
 @app.get("/api/agents")
 async def get_agents():
     async with aiosqlite.connect(DB_PATH) as db:

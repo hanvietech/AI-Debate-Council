@@ -28,3 +28,5 @@ implementation_plan.md
 
 # macOS
 .DS_Store
+.venv2/pyvenv.cfg
+test.txt

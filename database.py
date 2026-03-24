@@ -1,9 +1,10 @@
 import sqlite3
 import os
 
-DB_NAME = "council.db"
+DB_NAME = "data/council.db"
 
 def init_db():
+    os.makedirs(os.path.dirname(DB_NAME), exist_ok=True)
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
@@ -63,9 +64,9 @@ def init_db():
         cursor.executemany('''
         INSERT INTO agents (name, api_url, model_name, api_key, role_prompt, is_active) VALUES (?, ?, ?, ?, ?, ?)
         ''', [
-            ('Mock Claude', 'http://localhost:8080/v1/chat/completions', 'claude-3-opus', '', '당신은 보수적이고 비판적인 분석가입니다.', 1),
-            ('Mock Gemini', 'http://localhost:8080/v1/chat/completions', 'gemini-1.5-pro', '', '당신은 창의적이고 혁신적인 제안가입니다.', 1),
-            ('Mock GPT', 'http://localhost:8080/v1/chat/completions', 'gpt-4o', '', '당신은 중립적이고 객관적인 조정자입니다.', 1)
+            ('Mock Claude', 'http://localhost:8081/v1/chat/completions', 'claude-sonnet-4-6', '', '당신은 보수적이고 비판적인 분석가입니다.', 1),
+            ('Mock Gemini', 'http://localhost:8081/v1/chat/completions', 'gemini-2.5-pro', '', '당신은 창의적이고 혁신적인 제안가입니다.', 1),
+            ('Mock GPT', 'http://localhost:8081/v1/chat/completions', 'gpt-5', '', '당신은 중립적이고 객관적인 조정자입니다.', 1)
         ])
 
     conn.commit()

@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 CLI_PATH = os.path.join(os.path.dirname(__file__), "bin", "CLIProxyAPI")
-AUTH_DIR = os.path.expanduser("~/.cli-proxy-api")
+AUTH_DIR = os.path.join(os.path.dirname(__file__), "data", ".cli-proxy-api")
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.yaml")
 
 def get_available_providers():
