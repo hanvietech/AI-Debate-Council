@@ -1,7 +1,10 @@
 version: '3.8'
 
+name: multiagent3
+
 services:
   backend:
+    platform: linux/amd64
     build: .
     ports:
       - "8000:8000"
@@ -19,6 +22,7 @@ services:
     restart: unless-stopped
 
   frontend:
+    platform: linux/amd64
     build: frontend2
     ports:
       - "5173:5173"

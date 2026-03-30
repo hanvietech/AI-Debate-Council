@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
 import AuthPanel from './AuthPanel';
 
+function ModelSelect({ value, onChange, models, style }) {
+  return (
+    <select value={value} onChange={onChange} style={{ ...style, appearance: 'auto' }}>
+      {value && !models.includes(value) && <option value={value}>{value} (미연결)</option>}
+      {models.map(m => <option key={m} value={m}>{m}</option>)}
+      {models.length === 0 && (!value || models.includes(value)) && <option value={value}>{value || 'Loading...'}</option>}
+    </select>
+  );
+}
+
 export default function Settings() {
   const [sApiUrl, setSApiUrl] = useState('');
   const [sModel, setSModel] = useState('');
@@ -30,7 +40,12 @@ export default function Settings() {
     } catch(e) {}
   };
 
-  useEffect(() => { loadData(); loadModels(); }, []);
+  useEffect(() => {
+    loadData();
+    loadModels();
+    window.addEventListener('focus', loadModels);
+    return () => window.removeEventListener('focus', loadModels);
+  }, []);
 
   const saveSummarizer = async () => {
     await fetch('/api/settings', {
@@ -98,7 +113,7 @@ export default function Settings() {
           <div style={{ display: 'flex', gap: '16px' }}>
             <div style={{ flex: 1 }}>
               <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Model Name</label>
-              <input type="text" value={sModel} onChange={e=>setSModel(e.target.value)} style={inputStyle} />
+              <ModelSelect value={sModel} onChange={e=>setSModel(e.target.value)} models={availableModels} style={inputStyle} />
             </div>
             <div style={{ flex: 1 }}>
               <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>API Key (Optional)</label>
@@ -138,17 +153,7 @@ export default function Settings() {
                 <tr key={i} style={{ borderBottom: '1px solid var(--border-color)' }}>
                   <td style={{ padding: '8px' }}><input type="text" value={ag.name} onChange={e => updateAgent(i, 'name', e.target.value)} style={inputStyle} /></td>
                   <td style={{ padding: '8px' }}>
-                    <select 
-                      value={ag.model_name} 
-                      onChange={e => updateAgent(i, 'model_name', e.target.value)} 
-                      style={{ ...inputStyle, color: 'var(--gpt-color)', appearance: 'auto' }}
-                    >
-                      {availableModels.includes(ag.model_name) || !ag.model_name ? null : <option value={ag.model_name}>{ag.model_name} (미연결)</option>}
-                      {availableModels.map(m => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                      {availableModels.length === 0 && (!ag.model_name || availableModels.includes(ag.model_name)) && <option value={ag.model_name}>{ag.model_name || 'Loading...'}</option>}
-                    </select>
+                    <ModelSelect value={ag.model_name} onChange={e => updateAgent(i, 'model_name', e.target.value)} models={availableModels} style={{ ...inputStyle, color: 'var(--gpt-color)' }} />
                   </td>
                   <td style={{ padding: '8px' }}><input type="text" value={ag.api_url} onChange={e => updateAgent(i, 'api_url', e.target.value)} style={{ ...inputStyle, fontFamily: 'monospace', fontSize: '0.85em' }} /></td>
                   <td style={{ padding: '8px' }}><input type="password" value={ag.api_key} onChange={e => updateAgent(i, 'api_key', e.target.value)} placeholder="Optional" style={inputStyle} /></td>

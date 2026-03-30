@@ -4,10 +4,14 @@ import json
 import re
 import subprocess
 import asyncio
+import time
 from datetime import datetime, timezone
 import logging
 
 logger = logging.getLogger(__name__)
+
+_auth_cache: dict = {"data": [], "ts": 0.0}
+_AUTH_CACHE_TTL = 30  # seconds
 
 CLI_PATH = os.path.join(os.path.dirname(__file__), "bin", "CLIProxyAPI")
 AUTH_DIR = os.path.join(os.path.dirname(__file__), "data", ".cli-proxy-api")
@@ -75,11 +79,18 @@ def get_available_providers():
 def get_all_auth_status():
     """
     Reads ~/.cli-proxy-api/*.json and returns token status.
+    Results are cached for _AUTH_CACHE_TTL seconds to avoid repeated file I/O.
     """
+    global _auth_cache
+    now = time.time()
+    if now - _auth_cache["ts"] < _AUTH_CACHE_TTL:
+        return _auth_cache["data"]
+
     status_list = []
     if not os.path.exists(AUTH_DIR):
+        _auth_cache = {"data": status_list, "ts": now}
         return status_list
-        
+
     for file in glob.glob(os.path.join(AUTH_DIR, "*.json")):
         try:
             with open(file, 'r', encoding='utf-8') as f:
@@ -92,7 +103,8 @@ def get_all_auth_status():
             is_valid = False
             if expired_str:
                 try:
-                    expired_dt = datetime.fromisoformat(expired_str)
+                    # Python 3.9 fromisoformat() doesn't support 'Z' suffix
+                    expired_dt = datetime.fromisoformat(expired_str.replace('Z', '+00:00'))
                     if expired_dt.tzinfo is None:
                         expired_dt = expired_dt.replace(tzinfo=timezone.utc)
                     if expired_dt > datetime.now(timezone.utc):
@@ -110,7 +122,8 @@ def get_all_auth_status():
             })
         except Exception:
             continue
-            
+
+    _auth_cache = {"data": status_list, "ts": now}
     return status_list
 
 async def start_oauth_login(provider_flag: str, extra_input: str = None):

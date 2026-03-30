@@ -189,14 +189,34 @@ async def api_get_providers():
 
 @app.get("/api/models")
 async def api_get_models():
-    """Fetches available models from CLIProxyAPI on port 8081"""
+    """Fetches available models from CLIProxyAPI, filtered to authenticated providers only"""
     try:
         async with httpx.AsyncClient() as client:
             resp = await client.get("http://127.0.0.1:8081/v1/models", timeout=2.0)
             if resp.status_code == 200:
                 data = resp.json()
-                return {"models": [m["id"] for m in data.get("data", [])] }
-    except Exception as e:
+                models = data.get("data", [])
+
+                auth_status = get_all_auth_status()
+                valid_providers = {s["provider"].lower() for s in auth_status if s["is_valid"]}
+
+                if not valid_providers:
+                    return {"models": [m["id"] for m in models]}
+
+                # provider type → owned_by value in CLIProxyAPI model list
+                owned_by_map = {"codex": "openai", "gemini": "google", "claude": "anthropic"}
+
+                valid_owners = {owned_by_map[p] for p in valid_providers if p in owned_by_map}
+                # fallback: providers not in map → substring match on model id
+                unmapped = valid_providers - set(owned_by_map)
+
+                available = [
+                    m["id"] for m in models
+                    if m.get("owned_by") in valid_owners
+                    or any(p in m["id"].lower() for p in unmapped)
+                ]
+                return {"models": available if available else [m["id"] for m in models]}
+    except Exception:
         pass
     return {"models": []}
 
